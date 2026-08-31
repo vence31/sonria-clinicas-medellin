@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sonría Clínicas Odontológicas Medellín • Línea Nacional #262</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Montserrat:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Top National Header -->
+  <header class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <span class="brand-logo">😁 Sonría</span>
+        <span class="brand-sub">Clínicas Odontológicas • Red Medellín & Valle de Aburrá</span>
+      </div>
+      <nav class="nav-links-menu">
+        <a href="#sedes" class="nav-link-item">7 Sedes Medellín</a>
+        <a href="#cotizador" class="nav-link-item">Plan Cuotas</a>
+        <a href="#especialidades" class="nav-link-item">Especialidades</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn-dial-nav" onclick="openDialModal()">
+          📞 Línea Gratis #262
+        </button>
+        <button class="btn-outline-primary" onclick="openAdminModal()">
+          📋 Citas Agendadas (<span id="lead-count-badge">0</span>)
+        </button>
+        <div class="clinic-switcher-dropdown">
+          <button class="btn-switch-hub">🌐 Red Medellín ▾</button>
+          <div class="switcher-menu">
+            <a href="http://localhost:3000">1. Smile in Medellín (3000)</a>
+            <a href="http://localhost:3001" class="active-clinic">2. Sonría Clínicas #262 (3001)</a>
+            <a href="http://localhost:3002">3. Clínica Ártica (3002)</a>
+            <a href="http://localhost:3003">4. Dental Home (3003)</a>
+            <a href="http://localhost:3004">5. Marlon Becerra (3004)</a>
+            <a href="http://localhost:3005">6. Col. de Implantes (3005)</a>
+            <a href="http://localhost:3006">7. Oral Studio (3006)</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section with Split-Screen Agency Showcase -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <!-- Left Column: Copy & Interactive Bento Cards -->
+      <div class="hero-left">
+        <div class="hero-pill-badge">
+          <span class="pulse-dot"></span>
+          <span>🇨🇴 Red Odontológica Líder • 7 Sedes en el Valle de Aburrá</span>
+        </div>
+        <h1 class="hero-headline">
+          La Odontología Más Avanzada de Medellín, <span class="text-gradient-sonria">Financiada a Tu Medida.</span>
+        </h1>
+        <p class="hero-subhead">
+          Diseño de sonrisa, ortodoncia invisible e implantes dentales con tecnología 3D. Agenda tu cita de valoración marcando gratis al <strong>#262</strong> desde tu celular o chatea con Camila en tiempo real.
+        </p>
+
+        <!-- Speed Dial #262 Interactive Banner -->
+        <div class="bento-card dial-hero-card">
+          <div class="dial-hero-content">
+            <div class="dial-badge-icon">📞</div>
+            <div>
+              <h3>Marcación Rápida: #262 (Sonría Colombia)</h3>
+              <p>Llama gratis desde cualquier operador móvil (Claro, Tigo, Movistar, WOM) con atención inmediata.</p>
+            </div>
+          </div>
+          <button class="btn-dial" id="dial-btn" onclick="openDialModal()">
+            🎙️ Iniciar Llamada al #262 (Voz Neuronal Salomé)
+          </button>
+        </div>
+
+        <!-- Sede Explorer Bento -->
+        <div class="bento-card sedes-card" id="sedes">
+          <div class="bento-title-row">
+            <h3>📍 Sedes en Medellín y Alrededores</h3>
+            <span class="status-open-badge">🟢 7 Sedes Abiertas Hoy</span>
+          </div>
+          <p class="small-text">Selecciona tu sede preferida en el Valle de Aburrá para ver ubicación y agendar:</p>
+          <div class="sede-select-wrapper">
+            <select id="sede-dropdown" onchange="updateSedeDetails()">
+              <option value="laureles">Laureles - Carrera 70 # 44B-29 (Barrio Naranjal)</option>
+              <option value="centro">Centro - Calle 52 # 45-06 (Sector El Palo)</option>
+              <option value="envigado">Envigado - Calle 37 Sur # 43-57/59</option>
+              <option value="belen">Belén - Calle 30 # 75-57</option>
+              <option value="itagui">Itagüí - Calle 51 # 50-66</option>
+              <option value="bello">Bello - Carrera 50 # 48-41</option>
+              <option value="rionegro">Rionegro - Calle 50 # 48-27 (C.C. Multicompra)</option>
+            </select>
+          </div>
+          <div class="sede-info-box" id="sede-info-box">
+            <p><strong>Dirección:</strong> Carrera 70 # 44B-29 (Barrio Naranjal)</p>
+            <p><strong>Horario:</strong> Lun-Vie 7:00 AM - 7:00 PM | Sáb 8:00 AM - 2:00 PM</p>
+            <button class="btn-book-sede" onclick="bookInSede()">Agendar en esta Sede</button>
+          </div>
+        </div>
+
+        <!-- Plan Cuotas Sonría (COP Calculator Bento) -->
+        <div class="bento-card calc-card" id="cotizador">
+          <div class="bento-title-row">
+            <h3>💰 Cotizador y Plan Cuotas Sonría (COP)</h3>
+            <span class="badge-plan-cuotas">12 a 24 Meses</span>
+          </div>
+          <div class="calc-grid">
+            <div class="form-group">
+              <label>Tratamiento Odontológico</label>
+              <select id="calc-treatment" onchange="runCopCalculator()">
+                <option value="resinas">Diseño de Sonrisa en Resina ($350.000 / diente)</option>
+                <option value="porcelana">Carillas en Porcelana E-Max ($1.400.000 / diente)</option>
+                <option value="implante">Implante Dental Titanio ($2.800.000 c/u)</option>
+                <option value="ortodoncia">Ortodoncia Autoligado ($1.800.000)</option>
+                <option value="blanqueamiento">Blanqueamiento LED ($450.000)</option>
+                <option value="limpieza">Limpieza Profilaxis ($120.000)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Cantidad / Unidades</label>
+              <input type="number" id="calc-qty" value="6" min="1" max="28" oninput="runCopCalculator()">
+            </div>
+          </div>
+          <div class="calc-results">
+            <div class="res-row">
+              <span>Valor Total Estimado:</span>
+              <strong id="res-total-cop" class="highlight-blue">$2.100.000 COP</strong>
+            </div>
+            <div class="res-row finance-row">
+              <span>Cuota Mensual (Plan Cuotas 12 Meses):</span>
+              <strong id="res-monthly-cop" class="highlight-gold">$175.000 COP/mes</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Action Scenarios -->
+        <div class="quick-scenarios">
+          <span class="scenarios-title">⚡ Opciones Rápidas:</span>
+          <button class="scenario-btn" onclick="sendQuickMessage('Quiero agendar una cita de valoración en la sede Laureles')">📅 Cita en Laureles</button>
+          <button class="scenario-btn" onclick="sendQuickMessage('¿Qué precio tienen los implantes dentales?')">🦷 Implantes Dentales</button>
+          <button class="scenario-btn" onclick="sendQuickMessage('¿Cuál es la sede más cercana al Centro?')">📍 Sede Centro (El Palo)</button>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Smartphone WhatsApp & Live Voice Simulator -->
+      <div class="hero-right">
+        <div class="phone-spotlight-sonria">
+          <div class="phone-header-pill">
+            <span class="live-dot-green"></span>
+            <span>Camila • Asesora Virtual Sonría #262</span>
+          </div>
+
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <header class="chat-header">
+              <div class="chat-avatar">
+                <span class="avatar-badge">👩‍⚕️</span>
+              </div>
+              <div class="chat-meta">
+                <div class="chat-title">Camila • Asesora Sonría <span class="verified-check">✓</span></div>
+                <div class="chat-subtitle">Línea Nacional #262 • En Línea</div>
+              </div>
+              <div class="chat-header-actions">
+                <span onclick="openDialModal()" title="Llamar al #262" style="cursor:pointer;font-size:18px;">📞</span>
+              </div>
+            </header>
+
+            <div class="chat-stream" id="chat-stream">
+              <div class="date-badge">Hoy</div>
+              <div class="msg incoming">
+                <div class="bubble">
+                  <p>¡Hola! Bienvenido a <strong>Sonría Clínicas Odontológicas Medellín</strong> 🦷✨</p>
+                  <p>Soy <strong>Camila</strong>, tu asesora virtual. Puedes agendar tu valoración aquí o marcando gratis al <strong>#262</strong> desde tu celular.</p>
+                  <p>¿Para qué tratamiento o en qué sede te gustaría tu cita?</p>
+                  <span class="msg-time">09:00</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="typing-notice" id="typing-notice" style="display:none;">
+              Camila está escribiendo<span>.</span><span>.</span><span>.</span>
+            </div>
+
+            <div class="voice-indicator" id="voice-indicator" style="display: none;">
+              🎙️ <span id="voice-status-text">Camila está hablando con Voz Neuronal Salomé (Colombia)...</span>
+              <div class="sound-wave"><span></span><span></span><span></span><span></span></div>
+            </div>
+
+            <footer class="chat-input-bar">
+              <input type="text" id="user-input" placeholder="Escribe un mensaje o habla..." autocomplete="off">
+              <button id="sonria-mic-btn" class="mic-btn" onclick="toggleSonriaVoice()" title="Hablar por micrófono con Camila">🎙️</button>
+              <button id="send-btn" class="btn-send" onclick="submitMessage()">Enviar</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Especialidades Odontológicas Integrales -->
+  <section class="section-container" id="especialidades">
+    <div class="section-header">
+      <span class="section-kicker">TRATAMIENTOS CERTIFICADOS</span>
+      <h2>Especialidades Clínicas Sonría</h2>
+      <p>Atención odontológica integral con especialistas acreditados en todas las sedes de Medellín:</p>
+    </div>
+
+    <div class="specialties-grid">
+      <div class="specialty-card">
+        <div class="specialty-icon">✨</div>
+        <h4>Diseño de Sonrisa 3D</h4>
+        <p>Carillas en resina de alta estética y porcelana E-Max®. Armonización dental personalizada con escaneo digital intraoral.</p>
+      </div>
+      <div class="specialty-card">
+        <div class="specialty-icon">🦷</div>
+        <h4>Implantes Dentales y Cirugía</h4>
+        <p>Rehabilitación sobre implantes de titanio de carga inmediata. Técnicas mínimamente invasivas con regeneración ósea guiada.</p>
+      </div>
+      <div class="specialty-card">
+        <div class="specialty-icon">😁</div>
+        <h4>Ortodoncia Digital</h4>
+        <p>Alineadores invisibles, brackets de autoligado estéticos y metálicos para corregir mordida y alinear tu sonrisa con rapidez.</p>
+      </div>
+      <div class="specialty-card">
+        <div class="specialty-icon">🛡️</div>
+        <h4>Endodoncia y Prevención</h4>
+        <p>Tratamientos de conducto con microscopía, profilaxis ultrasónica profunda, blanqueamiento láser y odontopediatría.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal: Speed Dial #262 Simulator -->
+  <div id="dial-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog dial-dialog">
+      <div class="modal-head">
+        <h3>📱 Llamada en Vivo: Línea Nacional #262</h3>
+        <button class="btn-close" onclick="closeDialModal()">&times;</button>
+      </div>
+      <div class="dial-body">
+        <div class="dial-screen">
+          <div class="dial-number">#262</div>
+          <div class="dial-status" id="call-status">Conectado con Camila (Sonría Colombia)...</div>
+          <div class="ivr-output" id="ivr-output">Escuchando respuesta de voz...</div>
+        </div>
+        <div class="call-controls">
+          <button class="key-btn" onclick="pressIvr('1')"><strong>1</strong><span>Nueva Cita</span></button>
+          <button class="key-btn" onclick="pressIvr('2')"><strong>2</strong><span>Confirmar Cita</span></button>
+          <button class="key-btn" onclick="pressIvr('3')"><strong>3</strong><span>Urgencias</span></button>
+        </div>
+        <div style="text-align: center; margin-bottom: 14px;">
+          <button id="call-mic-btn" class="btn-dial" style="background: #10b981; color: white;" onclick="toggleSonriaVoice()">🎙️ Hablar por Micrófono</button>
+        </div>
+        <div class="dial-footer-actions">
+          <button class="btn-hangup" onclick="closeDialModal()">Finalizar Llamada</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Admin CRM -->
+  <div id="admin-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog admin-dialog">
+      <div class="modal-head">
+        <h3>📋 Panel de Citas - Sonría Medellín</h3>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <a href="/api/export-csv" class="btn-csv-download" download>📥 Descargar CSV</a>
+          <button class="btn-close" onclick="closeAdminModal()">&times;</button>
+        </div>
+      </div>
+      <div class="admin-stats">
+        <div class="stat-card">
+          <span class="stat-lbl">Total Citas Registradas</span>
+          <span class="stat-val" id="stat-leads-count">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-lbl">Valor Estimado en Tratamientos</span>
+          <span class="stat-val highlight-blue" id="stat-leads-val">$0 COP</span>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Tratamiento</th>
+              <th>Sede</th>
+              <th>Horario Preferido</th>
+              <th>Paciente / Teléfono</th>
+              <th>Estimado (COP)</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="leads-tbody">
+            <tr><td colspan="8" style="text-align:center;">No hay citas registradas todavía.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>© 2026 Sonría Clínicas Odontológicas S.A. • Red Medellín & Valle de Aburrá • Línea Nacional #262</p>
+      <div class="footer-actions">
+        <button class="btn-reset-text" onclick="resetChat()">Reiniciar Chat</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
