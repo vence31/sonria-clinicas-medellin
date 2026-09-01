@@ -89,5 +89,26 @@ test.describe('Sonría Clínicas Odontológicas Medellín - E2E Suite', () => {
     await expect(page.locator('#admin-modal')).toBeHidden();
   });
 
+  test('Test 6: Theme Toggle Changes Light/Dark Mode & Skip Link is Present', async ({ page }) => {
+    await page.goto('/');
+
+    // Check Skip Link
+    const skipLink = page.locator('.skip-link');
+    await expect(skipLink).toBeAttached();
+    await expect(skipLink).toHaveAttribute('href', '#main-content');
+
+    // Check initial theme
+    const html = page.locator('html');
+    await expect(html).toHaveAttribute('data-theme', 'light');
+
+    // Click theme toggle
+    await page.click('#theme-toggle');
+    await expect(html).toHaveAttribute('data-theme', 'dark');
+
+    // Click again to toggle back
+    await page.click('#theme-toggle');
+    await expect(html).toHaveAttribute('data-theme', 'light');
+  });
+
 });
 
