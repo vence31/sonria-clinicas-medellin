@@ -1158,6 +1158,87 @@ body::before {
   font-weight: 600;
 }
 
+
+/* ==========================================================================
+   Video Showcase Section (Power Design Multimedia Standard)
+   ========================================================================== */
+.video-card-container {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 28px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: 20px;
+  padding: clamp(16px, 3vw, 28px);
+  box-shadow: var(--card-shadow);
+  align-items: center;
+}
+
+.video-player-wrapper {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  aspect-ratio: 16 / 9;
+}
+
+.promo-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-card-sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.video-feature-pill {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent-cyan-subtle);
+  color: var(--accent-cyan);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  align-self: flex-start;
+  margin-bottom: 12px;
+}
+
+.video-card-sidebar h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 14px;
+  line-height: 1.25;
+}
+
+.video-feature-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.video-feature-list li {
+  line-height: 1.45;
+}
+
+.video-feature-list strong {
+  color: var(--text-main);
+}
+
+@media (max-width: 960px) {
+  .video-card-container {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* 7. Specialties Section */
 .section-container {
   max-width: 1280px;
