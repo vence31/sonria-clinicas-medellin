@@ -507,3 +507,164 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+
+// --- THREE.JS 3D DENTAL STUDIO ---
+let studio3DInitialized = false;
+let scene3D, camera3D, renderer3D, toothGroup3D, crownMesh3D, rootMesh3D, alignerMesh3D;
+let isDragging3D = false, prevMousePos = { x: 0, y: 0 };
+
+function init3DStudio() {
+  if (studio3DInitialized) return;
+  const container = document.getElementById('threejs-canvas-container');
+  if (!container || typeof THREE === 'undefined') return;
+
+  studio3DInitialized = true;
+  scene3D = new THREE.Scene();
+  const width = container.clientWidth || 550;
+  const height = container.clientHeight || 400;
+  camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+  camera3D.position.set(0, 0, 7.5);
+
+  renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer3D.setSize(width, height);
+  renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.innerHTML = '';
+  container.appendChild(renderer3D.domElement);
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.9);
+  scene3D.add(ambient);
+
+  const keyLight = new THREE.DirectionalLight(0x38bdf8, 1.3);
+  keyLight.position.set(5, 5, 6);
+  scene3D.add(keyLight);
+
+  const fillLight = new THREE.DirectionalLight(0xffb703, 0.7);
+  fillLight.position.set(-5, -3, 4);
+  scene3D.add(fillLight);
+
+  toothGroup3D = new THREE.Group();
+
+  // Anatomical Crown
+  const crownGeo = new THREE.CylinderGeometry(1.3, 1.0, 1.8, 32, 16);
+  const crownMat = new THREE.MeshPhysicalMaterial({
+    color: 0xfdfdfd,
+    roughness: 0.15,
+    metalness: 0.05,
+    transmission: 0.35,
+    thickness: 0.8,
+    clearcoat: 1.0
+  });
+  crownMesh3D = new THREE.Mesh(crownGeo, crownMat);
+  crownMesh3D.position.y = 0.9;
+  toothGroup3D.add(crownMesh3D);
+
+  // Anatomical Root
+  const rootGeo = new THREE.ConeGeometry(0.85, 2.4, 24);
+  const rootMat = new THREE.MeshStandardMaterial({
+    color: 0x94a3b8,
+    roughness: 0.3,
+    metalness: 0.85
+  });
+  rootMesh3D = new THREE.Mesh(rootGeo, rootMat);
+  rootMesh3D.rotation.x = Math.PI;
+  rootMesh3D.position.y = -1.2;
+  toothGroup3D.add(rootMesh3D);
+
+  // Invisible Aligner Shell
+  const alignerGeo = new THREE.CylinderGeometry(1.4, 1.1, 2.0, 32, 8, true);
+  const alignerMat = new THREE.MeshPhysicalMaterial({
+    color: 0x38bdf8,
+    roughness: 0.1,
+    transmission: 0.9,
+    opacity: 0.45,
+    transparent: true
+  });
+  alignerMesh3D = new THREE.Mesh(alignerGeo, alignerMat);
+  alignerMesh3D.position.y = 0.9;
+  alignerMesh3D.visible = false;
+  toothGroup3D.add(alignerMesh3D);
+
+  scene3D.add(toothGroup3D);
+
+  // Drag controls
+  const dom = renderer3D.domElement;
+  dom.addEventListener('mousedown', e => { isDragging3D = true; prevMousePos = { x: e.clientX, y: e.clientY }; });
+  dom.addEventListener('mousemove', e => {
+    if (!isDragging3D) return;
+    const dx = e.clientX - prevMousePos.x;
+    const dy = e.clientY - prevMousePos.y;
+    toothGroup3D.rotation.y += dx * 0.01;
+    toothGroup3D.rotation.x += dy * 0.01;
+    prevMousePos = { x: e.clientX, y: e.clientY };
+  });
+  window.addEventListener('mouseup', () => { isDragging3D = false; });
+
+  // Touch controls
+  dom.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) { isDragging3D = true; prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }
+  });
+  dom.addEventListener('touchmove', e => {
+    if (!isDragging3D || e.touches.length !== 1) return;
+    const dx = e.touches[0].clientX - prevMousePos.x;
+    const dy = e.touches[0].clientY - prevMousePos.y;
+    toothGroup3D.rotation.y += dx * 0.012;
+    toothGroup3D.rotation.x += dy * 0.012;
+    prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  });
+  window.addEventListener('touchend', () => { isDragging3D = false; });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!isDragging3D) { toothGroup3D.rotation.y += 0.006; }
+    renderer3D.render(scene3D, camera3D);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    if (!container || !camera3D || !renderer3D) return;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    camera3D.aspect = w / h;
+    camera3D.updateProjectionMatrix();
+    renderer3D.setSize(w, h);
+  });
+}
+
+function switch3DMode(mode) {
+  const title = document.getElementById('current-procedure-title');
+  const desc = document.getElementById('current-procedure-desc');
+  const buttons = document.querySelectorAll('.btn-procedure');
+  buttons.forEach(b => b.classList.remove('active'));
+
+  if (mode === 'veneer') {
+    buttons[0]?.classList.add('active');
+    if (title) title.innerText = 'Diseño de Sonrisa (Carilla E-Max)';
+    if (desc) desc.innerText = 'Capa ultra-delgada de disilicato de litio adherida sobre el esmalte dental con brillo natural, micro-textura y translucidez incisal perfecta.';
+    if (crownMesh3D) crownMesh3D.material.color.setHex(0xfdfdfd);
+    if (rootMesh3D) rootMesh3D.material.color.setHex(0x94a3b8);
+    if (alignerMesh3D) alignerMesh3D.visible = false;
+  } else if (mode === 'implant') {
+    buttons[1]?.classList.add('active');
+    if (title) title.innerText = 'Implante Dental Titanio 3D';
+    if (desc) desc.innerText = 'Perno de titanio grado médico osteointegrado que reemplaza la raíz dental perdida, rematado con corona de porcelana atornillada.';
+    if (crownMesh3D) crownMesh3D.material.color.setHex(0xffffff);
+    if (rootMesh3D) {
+      rootMesh3D.material.color.setHex(0x475569);
+      rootMesh3D.material.metalness = 0.95;
+    }
+    if (alignerMesh3D) alignerMesh3D.visible = false;
+  } else if (mode === 'aligner') {
+    buttons[2]?.classList.add('active');
+    if (title) title.innerText = 'Ortodoncia Invisible (Alineador SELF)';
+    if (desc) desc.innerText = 'Funda biomecánica termoformada transparente que ejerce micromovimientos indoloros para alinear tus dientes sin alambres.';
+    if (alignerMesh3D) alignerMesh3D.visible = true;
+  }
+}
+
+// Hook 3D studio initialization to load events
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init3DStudio);
+} else {
+  init3DStudio();
+}

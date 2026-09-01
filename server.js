@@ -3,6 +3,13 @@ const cors = require('cors');
 const path = require('path');
 const { DatabaseSync } = require('node:sqlite');
 
+process.on('uncaughtException', (err) => {
+  console.error('[Sonria Uncaught Exception]', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[Sonria Unhandled Rejection]', reason);
+});
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -306,7 +313,21 @@ app.get('/api/tts', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`[Sonria Medellin Simulator] Running on http://localhost:${PORT}`);
-});
+function startServer() {
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[Sonria Medellin Simulator] Running on http://localhost:${PORT}`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Port ${PORT} in use/TIME_WAIT, retrying in 2 seconds...`);
+      setTimeout(startServer, 2000);
+    } else {
+      console.error('Server error:', err);
+    }
+  });
+}
+
+startServer();
+
 
