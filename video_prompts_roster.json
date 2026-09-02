@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "project": "Sonría Clínicas Odontológicas Medellín",
+  "pipeline_version": "2026.1",
+  "methodology": "Structured JSON Prompting (videoprompt.studio / Youri van Hofwegen Framework)",
+  "tutorial_reference": "https://youtu.be/oT-2VO8Jzpk",
+  "brand_spec": {
+    "location": "Medellín, Antioquia, Colombia (El Poblado / Laureles)",
+    "official_hotline": "#262 (Línea Nacional Gratuita)",
+    "aesthetic": "High-end Scandinavian-Colombian dental boutique, warm minimalist luxury, Arri Alexa 35mm tone, zero uncanny-valley"
+  },
+  "audio_spec": {
+    "narration_track": "media/sonria_spanish_262_master.mp3",
+    "narration_length_seconds": 14,
+    "video_audio_rule": "Generate footage silent or with faint ambient acoustic bed only. Voiceover is decoupled and mixed in CLI with FFmpeg to prevent AI speech garble."
+  },
+  "shots": [
+    {
+      "shot_id": 1,
+      "title": "Clinic Arrival & Exterior Architectural Establishing Shot",
+      "target_duration_seconds": 4,
+      "aspect_ratio": "16:9",
+      "primary_generator": "Luma Dream Machine (Ray 2)",
+      "fallback_generator": "Google Gemini / Veo 4K",
+      "camera": {
+        "lens": "24mm anamorphic lens, f/4.0",
+        "movement": "Slow stabilized low-altitude drone push-in moving smoothly toward the entrance glass facade",
+        "framing": "Wide exterior establishing shot transitioning to medium-wide at the entrance doors"
+      },
+      "lighting": {
+        "style": "Crisp morning tropical sunlight with diffuse soft shadows, reflections of lush green Medellín mountains in glass windows",
+        "color_temperature": "5400K natural morning daylight"
+      },
+      "subject": {
+        "scene": "Ultra-modern dental clinic exterior in El Poblado Medellín. Brushed matte slate-grey facade, floor-to-ceiling clean glass, warm teak wood accents, lush Monstera and tropical foliage framing the terrace.",
+        "typography": "Sleek architectural signage illuminated softly: 'SONRÍA Clínicas Odontológicas'"
+      },
+      "action": {
+        "dynamics": "A modern vehicle glides smoothly past in foreground motion blur. Automatic glass doors gently part open revealing the warm Scandinavian marble reception lounge inside with receptionist smiling.",
+        "pacing": "Gentle, welcoming, prestigious"
+      },
+      "negative_prompt": "cartoon, oversaturated, gloomy, blurry, flickering, distorted architecture, chaotic traffic, low resolution, stuttering motion",
+      "raw_prompt": "Cinematic 4K establishing shot, 24mm anamorphic lens, f/4.0. Exterior of high-end modern dental clinic in El Poblado Medellín, Colombia. Lush tropical mountain reflections in pristine floor-to-ceiling glass windows. Brushed slate and warm teak wood architectural elements. Smooth stabilized drone push-in toward the entrance as automatic glass doors smoothly glide open revealing a warm luxury marble lounge inside. Morning tropical sunlight, crisp reflections, natural depth, zero distortion, Arri Alexa commercial aesthetic."
+    },
+    {
+      "shot_id": 2,
+      "title": "Precision 3D Intraoral Laser Scanning & Hand Mechanics",
+      "target_duration_seconds": 4,
+      "aspect_ratio": "16:9",
+      "primary_generator": "Kling AI 2.0 / 1.5",
+      "fallback_generator": "OpenAI Sora (Sora-2)",
+      "camera": {
+        "lens": "50mm prime cinema lens, f/2.0",
+        "movement": "Slow micro-dolly track from right to left with gentle parallax between dentist's hands and patient",
+        "framing": "Medium close-up focusing on the ergonomic digital wand and the patient's comfortable jawline"
+      },
+      "lighting": {
+        "style": "Soft clinical diffused beauty key light, subtle cyan volumetric ambient glow from scanning laser tip",
+        "color_temperature": "4800K balanced clinical luxury"
+      },
+      "subject": {
+        "dentist": "Professional Colombian female specialist, 34 years old, hair tied in elegant neat bun, slate-blue scrub coat, nitrile examination gloves with anatomically perfect five fingers.",
+        "patient": "Young Latina patient resting comfortably in ergonomic leather treatment chair, eyes relaxed and calm.",
+        "tool": "High-tech slender 3D digital intraoral scanner wand emitting a soft precision cyan light grid."
+      },
+      "action": {
+        "dynamics": "Dentist's hands move with calm surgical precision, gently gliding the slim scanner tip along the upper dental arch. In the shallow-focus background, a crisp 4K OLED monitor dynamically reconstructs the real-time 3D photorealistic digital model of the patient's teeth.",
+        "pacing": "Smooth, deliberate, soothing"
+      },
+      "negative_prompt": "distorted hands, six fingers, deformed tools, grotesque open mouth, saliva, blood, medical gore, flickering laser, cartoonish 3D graphics, rubber skin",
+      "raw_prompt": "Cinematic close-up, 50mm cinema lens, f/2.0. Professional Colombian female dentist in slate-blue coat smoothly operating a sleek handheld 3D intraoral digital scanner wand. Realistic human hands with five clean fingers in nitrile gloves. Gentle cyan scanning light traces dental arch. Patient relaxed in modern cream leather chair. Background OLED screen rendering realistic 3D dental scan. Soft medical studio lighting, authentic human skin pores, photorealistic, pristine, calm technology."
+    },
+    {
+      "shot_id": 3,
+      "title": "Macro Porcelain Veneer Craftsmanship & Optical Refraction",
+      "target_duration_seconds": 4,
+      "aspect_ratio": "16:9",
+      "primary_generator": "Runway Gen-3 Alpha",
+      "fallback_generator": "Google Gemini / Veo 4K",
+      "camera": {
+        "lens": "100mm Macro Cinema Lens, f/2.8",
+        "movement": "Ultra-smooth macro orbital slide with shifting specular highlights across porcelain facets",
+        "framing": "Extreme Macro / Beauty commercial shot"
+      },
+      "lighting": {
+        "style": "High-end Swiss watch commercial lighting, dual rim lights, soft bounce creating translucent opalescence",
+        "color_temperature": "5000K pure neutral daylight"
+      },
+      "subject": {
+        "object": "Single micro-thin custom porcelain veneer (E-Max lithium disilicate) held delicately by precision titanium dental tweezers with satin finish.",
+        "details": "Natural incisal translucency, subtle mamelons, micro-texture on tooth enamel surface refracting soft ambient light."
+      },
+      "action": {
+        "dynamics": "The tweezer rotates the porcelain veneer by 15 degrees. A pristine beam of diffused warm light sweeps across the veneer crown, revealing microscopic handcrafted enamel ridges and gem-like optical clarity.",
+        "pacing": "Hypnotic, luxurious, bespoke craftsmanship"
+      },
+      "negative_prompt": "plastic look, opaque fake white chiclet, dirt, fingerprints, coarse grain, blurry focus, shaky camera, low poly, oversaturated yellow",
+      "raw_prompt": "Extreme macro 100mm lens shot, f/2.8. A handcrafted ultra-thin porcelain dental veneer held delicately by satin titanium tweezers. Luxury watch commercial lighting with soft dual rim highlights. Pristine optical clarity, natural incisal translucency, handcrafted micro-texture mimicking genuine human enamel. Gentle rotation revealing delicate specular light refractions across the ceramic surface. Hyper-detailed, 8K commercial polish, Arri Alexa quality."
+    },
+    {
+      "shot_id": 4,
+      "title": "Emotional Patient Smile Reveal & Organic Joy",
+      "target_duration_seconds": 4,
+      "aspect_ratio": "16:9",
+      "primary_generator": "MiniMax Hailuo AI (T2V-01)",
+      "fallback_generator": "Kling AI 2.0",
+      "camera": {
+        "lens": "85mm Portrait Prime, f/1.8",
+        "movement": "Gentle handheld push-in with organic breathing motion, locked on patient's eyes and smile",
+        "framing": "Medium close-up to portrait framing"
+      },
+      "lighting": {
+        "style": "Warm golden hour natural light pouring through large window, soft fill on cheekbones, natural catchlights in pupils",
+        "color_temperature": "4200K golden warmth"
+      },
+      "subject": {
+        "patient": "Colombian woman, 27 years old, warm olive skin tone, dark hazel eyes, dark brown wavy hair framing her shoulders, natural skin texture with subtle laugh lines.",
+        "mirror": "Holding an elegant round brushed brass handheld mirror."
+      },
+      "action": {
+        "dynamics": "Patient lowers the handheld mirror slightly, looks up directly into the camera lens with initial disbelief that organically blossoms into an ecstatic, radiant, confident smile showing natural, perfectly aligned, luminous teeth. A gentle natural laugh escapes her lips.",
+        "pacing": "Emotional, authentic, heartwarming, unposed"
+      },
+      "negative_prompt": "stiff uncanny smile, uncanny valley, terrifying fake teeth, bleached neon white dentures, distorted eyes, rubber skin, emotionless face, awkward laugh",
+      "raw_prompt": "Cinematic portrait shot, 85mm prime lens, f/1.8, shallow depth of field. 27-year-old Colombian woman with natural olive skin and dark hazel eyes in warm sunlit dental suite. She looks into an elegant handheld mirror, lowers it, and looks toward the camera with genuine emotional wonder. Her face breaks into a radiant, joyful, authentic smile displaying beautiful, natural, luminous teeth. Warm sunlight catchlights in her eyes, lifelike micro-expressions, pure confidence, photorealistic cinema."
+    },
+    {
+      "shot_id": 5,
+      "title": "Luxury Clinic Outro & Direct Colombian Response CTA",
+      "target_duration_seconds": 3,
+      "aspect_ratio": "16:9",
+      "primary_generator": "OpenAI Sora (Sora-2)",
+      "fallback_generator": "Luma Dream Machine",
+      "camera": {
+        "lens": "35mm prime, f/2.4",
+        "movement": "Slow backward tracking dolly revealing reception team waving warmly",
+        "framing": "Medium wide shot of clinic interior lounge"
+      },
+      "lighting": {
+        "style": "Soft warm architectural interior lighting with backlit greenery wall",
+        "color_temperature": "3800K hospitable luxury"
+      },
+      "subject": {
+        "clinic": "Sonría Medellín reception lounge with living vertical botanical wall, warm terrazzo and marble counter, welcoming dental coordinators.",
+        "graphics": "Space reserved for clean on-screen title cards: 'Sonría Clínicas Odontológicas Medellín • Marca #262'"
+      },
+      "action": {
+        "dynamics": "Friendly Colombian dental team offers a welcoming warm nod and smile. Camera gently eases into resting position. Perfect smooth outro hold for branding overlay.",
+        "pacing": "Professional, reassuring, final call to action"
+      },
+      "negative_prompt": "flicker, erratic motion, crowded, chaotic, low light, muddy shadows, distorted faces, amateur video",
+      "raw_prompt": "Cinematic 35mm wide interior shot, f/2.4. Warm luxury reception of Sonría Clínicas Odontológicas in Medellín, Colombia. Lush vertical living wall, warm marble desk, inviting Scandinavian lighting. Friendly professional receptionists offer a welcoming warm smile toward camera. Slow smooth backward tracking camera easing into a stable rest frame. Prestigious healthcare hospitality, premium aesthetic."
+    }
+  ],
+  "universal_cli_assembly": {
+    "step_1": "Generate raw video clips using the above structured prompts on the assigned generator.",
+    "step_2": "Place the generated MP4 files into C:\\Users\\vence\\Downloads\\ as clip1.mp4, clip2.mp4, clip3.mp4, clip4.mp4, clip5.mp4.",
+    "step_3": "Execute assembly script: python scripts/assemble_fallback_commercial.py",
+    "step_4": "The script runs FFmpeg concat, auto-scales to 1920x1080@30fps, ducks ambient audio to 18%, layers Spanish #262 narration, injects +faststart, and outputs to media/sonria_medellin_262_promo.mp4.",
+    "step_5": "Playwright runs automated regression test on http://localhost:3001/ to verify web element readyState, resolution, and zero dropouts."
+  }
+}
