@@ -35,8 +35,8 @@
   /* Borders & Shadows */
   --border-card: #e2e8f0;
   --border-card-hover: #cbd5e1;
-  --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
-  --card-hover-shadow: 0 16px 36px -4px rgba(0, 75, 147, 0.12), 0 6px 16px -2px rgba(15, 23, 42, 0.06);
+  --card-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 6px 18px -2px rgba(15, 23, 42, 0.06), 0 14px 32px -6px rgba(0, 35, 71, 0.07);
+  --card-hover-shadow: 0 2px 6px rgba(15, 23, 42, 0.04), 0 12px 28px -4px rgba(0, 75, 147, 0.12), 0 24px 48px -8px rgba(0, 35, 71, 0.15);
   --hero-glow: radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.12) 0%, transparent 70%);
 
   /* Chat Simulator Tokens */
@@ -411,10 +411,11 @@ body::before {
 }
 
 .hero-headline {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(2.2rem, 1.4rem + 3.2vw, 3.6rem);
+  font-family: 'Syne', 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(2.3rem, 1.4rem + 3.4vw, 3.8rem);
   font-weight: 800;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.035em;
+  text-rendering: optimizeLegibility;
   line-height: 1.15;
   margin-bottom: 16px;
   color: var(--text-main);
@@ -1179,7 +1180,7 @@ body::before {
   border-radius: 14px;
   overflow: hidden;
   background: #000;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 16px 44px -10px rgba(0, 35, 71, 0.28), 0 0 0 1px rgba(2, 132, 199, 0.2);
   aspect-ratio: 16 / 9;
 }
 
@@ -1187,7 +1188,7 @@ body::before {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 20%;
+  object-position: center center;
   display: block;
 }
 
@@ -1262,7 +1263,7 @@ body::before {
 }
 
 .section-header h2 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Syne', 'Plus Jakarta Sans', sans-serif;
   font-size: clamp(1.8rem, 1.2rem + 1.8vw, 2.5rem);
   font-weight: 800;
   color: var(--text-main);
