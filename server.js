@@ -9,6 +9,18 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason, promise) => {
   console.error('[Sonria Unhandled Rejection]', reason);
 });
+process.on('exit', (code) => {
+  console.log('[Sonria Process Exit] code:', code);
+});
+process.on('beforeExit', (code) => {
+  console.log('[Sonria Process BeforeExit] code:', code);
+});
+process.on('SIGTERM', () => {
+  console.log('[Sonria Received SIGTERM]');
+});
+process.on('SIGINT', () => {
+  console.log('[Sonria Received SIGINT]');
+});
 
 const app = express();
 const PORT = process.env.PORT || 3001;

@@ -21,3 +21,9 @@ ehthumbs.db
 .parcel-cache/
 dist/
 .build/
+*.bak
+*.broken-blue-bak
+*.kenburns-bak
+*.old-english-bak
+*.gemini-raw.mp4
+*.muxed-spanish.mp4
