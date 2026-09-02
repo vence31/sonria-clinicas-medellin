@@ -1835,3 +1835,29 @@ td { padding: 10px 12px; border-bottom: 1px solid var(--border-card); color: var
     grid-template-columns: 1fr;
   }
 }
+
+/* Video Edition Switcher Button */
+.btn-switch-edition {
+  background: var(--bg-surface-alt);
+  color: var(--text-main);
+  border: 1px solid var(--border-card);
+  min-height: 48px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-switch-edition:hover {
+  background: var(--accent-cyan-subtle);
+  color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+  transform: translateY(-2px);
+}

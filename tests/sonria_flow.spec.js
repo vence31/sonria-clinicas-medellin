@@ -89,5 +89,28 @@ test.describe('Sonría Clínicas Odontológicas Medellín - E2E Suite', () => {
     await expect(page.locator('#admin-modal')).toBeHidden();
   });
 
+  test('Test 6: YouTube Edition Page Loads & Toggle Works Both Ways', async ({ page }) => {
+    await page.goto('/');
+
+    // Click toggle to YouTube Edition
+    const ytToggle = page.locator('#video-tour a[href*="youtube-tour.html"]');
+    await expect(ytToggle).toBeVisible();
+    await ytToggle.click();
+
+    // Verify YouTube page and iframe
+    await page.waitForURL('**/youtube-tour.html#video-tour');
+    const iframe = page.locator('#video-tour iframe');
+    await expect(iframe).toBeVisible();
+    await expect(iframe).toHaveAttribute('src', /youtube-nocookie\.com\/embed\/VwGrXe2ricE/);
+
+    // Click back to Veo Commercial
+    const backToggle = page.locator('#video-tour a[href*="index.html"]');
+    await expect(backToggle).toBeVisible();
+    await backToggle.click();
+    await page.waitForURL('**/index.html#video-tour');
+    await expect(page.locator('#video-tour video')).toBeVisible();
+  });
+
 });
+
 
