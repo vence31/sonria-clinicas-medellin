@@ -510,9 +510,157 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // --- THREE.JS 3D DENTAL STUDIO ---
+// Procedural anatomical tooth geometry: crown and root share one continuous
+// radius profile (no seam between primitives), so the silhouette reads as a
+// real tooth instead of a cone stacked on a cylinder.
 let studio3DInitialized = false;
-let scene3D, camera3D, renderer3D, toothGroup3D, crownMesh3D, rootMesh3D, alignerMesh3D;
+let scene3D, camera3D, renderer3D, toothGroup3D, crownMesh3D, rootMesh3D, alignerMesh3D, gumMesh3D;
 let isDragging3D = false, prevMousePos = { x: 0, y: 0 };
+
+function ease3D(a, b, x) {
+  const t = Math.min(Math.max((x - a) / (b - a), 0), 1);
+  return t * t * (3 - 2 * t);
+}
+
+// Crown profile: narrow at the cervical (gumline) collar, bulges through the
+// body, then narrows toward the incisal edge / occlusal table. Style shapes
+// the top third: 'incisor' (flat blade + mamelons), 'premolar' (2 cusps),
+// 'molar' (4 cusps + central fissure).
+function buildCrownGeometry(style) {
+  const height = 2.0;
+  const geo = new THREE.CylinderGeometry(1, 1, height, 40, 28, false);
+  const pos = geo.attributes.position;
+  const v = new THREE.Vector3();
+
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    const t = v.y / height + 0.5; // 0 = cervix, 1 = incisal/occlusal tip
+    const angle = Math.atan2(v.z, v.x);
+
+    const baseline = THREE.MathUtils.lerp(0.56, 0.22, t);
+    const bulge = Math.sin(t * Math.PI) * 0.5;
+    let radius = baseline + bulge;
+
+    if (style === 'molar') {
+      radius *= 1.1;
+      const topZone = ease3D(0.68, 1, t);
+      v.y += Math.cos(angle * 4) * 0.15 * topZone;
+      v.y -= Math.exp(-((v.x * v.x + v.z * v.z)) * 2.4) * 0.16 * topZone;
+    } else if (style === 'premolar') {
+      const topZone = ease3D(0.68, 1, t);
+      v.y += Math.cos(angle * 2) * 0.11 * topZone;
+    } else {
+      // incisor: flatten labiolingually, taper to a thin incisal edge with subtle mamelon ripples
+      v.z *= 0.6;
+      const edgeZone = ease3D(0.78, 1, t);
+      radius *= (1 - edgeZone * 0.35);
+      v.y -= edgeZone * 0.22;
+      v.y += Math.sin(angle * 6) * 0.012 * edgeZone;
+    }
+
+    v.x *= radius;
+    v.z *= radius;
+    pos.setXYZ(i, v.x, v.y, v.z);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// Natural root: tapers from the cervix radius (matches the crown's base exactly)
+// down to a rounded apex, with a gentle mesial curve real roots show.
+function buildRootGeometry() {
+  const height = 2.6;
+  const geo = new THREE.CylinderGeometry(1, 1, height, 28, 22, false);
+  const pos = geo.attributes.position;
+  const v = new THREE.Vector3();
+
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    const t = v.y / height + 0.5; // 0 = apex, 1 = cervix (matches crown t=0)
+    const radius = THREE.MathUtils.lerp(0.05, 0.56, Math.pow(t, 0.7));
+    v.x *= radius;
+    v.z *= radius;
+    v.x += Math.pow(1 - t, 2) * 0.22; // apex curves mesially
+    if (t < 0.05) v.y -= (0.05 - t) * 1.4; // round the apex
+    pos.setXYZ(i, v.x, v.y, v.z);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// Implant mode swaps the root for a threaded titanium fixture instead of an organic root.
+function buildImplantScrewGeometry() {
+  const height = 2.6;
+  const geo = new THREE.CylinderGeometry(1, 1, height, 28, 46, false);
+  const pos = geo.attributes.position;
+  const v = new THREE.Vector3();
+
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    const t = v.y / height + 0.5; // 0 = apex, 1 = top
+    const angle = Math.atan2(v.z, v.x);
+    let radius = THREE.MathUtils.lerp(0.08, 0.42, Math.pow(t, 0.5));
+    radius += Math.sin(t * Math.PI * 2 * 16 + angle) * 0.035 * ease3D(0.05, 0.95, t);
+    v.x *= radius;
+    v.z *= radius;
+    if (t < 0.04) v.y -= (0.04 - t) * 1.2;
+    pos.setXYZ(i, v.x, v.y, v.z);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// Clear aligner shell: an open-ended shape that wraps just outside the crown.
+function buildAlignerGeometry() {
+  const height = 2.3;
+  const geo = new THREE.CylinderGeometry(1, 1, height, 32, 20, true);
+  const pos = geo.attributes.position;
+  const v = new THREE.Vector3();
+
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    const t = v.y / height + 0.5;
+    const baseline = THREE.MathUtils.lerp(0.64, 0.3, t);
+    const radius = baseline + Math.sin(t * Math.PI) * 0.56;
+    v.x *= radius;
+    v.z *= radius;
+    pos.setXYZ(i, v.x, v.y, v.z);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// Rebuilds crown/root geometry and materials for the active procedure mode.
+function applyToothStyle(mode) {
+  if (crownMesh3D.geometry) crownMesh3D.geometry.dispose();
+  if (rootMesh3D.geometry) rootMesh3D.geometry.dispose();
+
+  const crownStyle = mode === 'implant' ? 'molar' : mode === 'aligner' ? 'premolar' : 'incisor';
+  crownMesh3D.geometry = buildCrownGeometry(crownStyle);
+  crownMesh3D.position.y = 1.0;
+
+  rootMesh3D.geometry = mode === 'implant' ? buildImplantScrewGeometry() : buildRootGeometry();
+  rootMesh3D.position.y = -1.3;
+
+  if (mode === 'implant') {
+    rootMesh3D.material.color.setHex(0xa8afb8);
+    rootMesh3D.material.metalness = 0.9;
+    rootMesh3D.material.roughness = 0.28;
+    crownMesh3D.material.color.setHex(0xfffdf7);
+  } else {
+    rootMesh3D.material.color.setHex(0xd8c398);
+    rootMesh3D.material.metalness = 0.0;
+    rootMesh3D.material.roughness = 0.6;
+    crownMesh3D.material.color.setHex(0xfffbf0);
+  }
+
+  alignerMesh3D.visible = mode === 'aligner';
+  if (alignerMesh3D.visible) {
+    if (alignerMesh3D.geometry) alignerMesh3D.geometry.dispose();
+    alignerMesh3D.geometry = buildAlignerGeometry();
+    alignerMesh3D.position.y = 0.85;
+  }
+}
 
 function init3DStudio() {
   if (studio3DInitialized) return;
@@ -524,55 +672,75 @@ function init3DStudio() {
   const width = container.clientWidth || 550;
   const height = container.clientHeight || 400;
   camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-  camera3D.position.set(0, 0, 7.5);
+  camera3D.position.set(0, 0.2, 8);
 
   renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer3D.setSize(width, height);
   renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  if (renderer3D.outputEncoding !== undefined) renderer3D.outputEncoding = THREE.sRGBEncoding;
+  if (renderer3D.toneMapping !== undefined) {
+    renderer3D.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer3D.toneMappingExposure = 1.15;
+  }
   container.innerHTML = '';
   container.appendChild(renderer3D.domElement);
 
-  const ambient = new THREE.AmbientLight(0xffffff, 0.9);
+  const hemi = new THREE.HemisphereLight(0xbfdbfe, 0x1e293b, 0.55);
+  scene3D.add(hemi);
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.5);
   scene3D.add(ambient);
 
-  const keyLight = new THREE.DirectionalLight(0x38bdf8, 1.3);
+  const keyLight = new THREE.DirectionalLight(0x38bdf8, 1.2);
   keyLight.position.set(5, 5, 6);
   scene3D.add(keyLight);
 
-  const fillLight = new THREE.DirectionalLight(0xffb703, 0.7);
+  const fillLight = new THREE.DirectionalLight(0xffb703, 0.6);
   fillLight.position.set(-5, -3, 4);
   scene3D.add(fillLight);
 
+  const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
+  rimLight.position.set(0, 4, -6);
+  scene3D.add(rimLight);
+
   toothGroup3D = new THREE.Group();
 
-  // Anatomical Crown
-  const crownGeo = new THREE.CylinderGeometry(1.3, 1.0, 1.8, 32, 16);
   const crownMat = new THREE.MeshPhysicalMaterial({
-    color: 0xfdfdfd,
-    roughness: 0.15,
-    metalness: 0.05,
-    transmission: 0.35,
+    color: 0xfffbf0,
+    roughness: 0.16,
+    metalness: 0.02,
+    transmission: 0.3,
+    ior: 1.6,
     thickness: 0.8,
-    clearcoat: 1.0
+    clearcoat: 0.5,
+    clearcoatRoughness: 0.2,
+    attenuationColor: new THREE.Color(0xf6e3b4),
+    attenuationDistance: 0.7
   });
-  crownMesh3D = new THREE.Mesh(crownGeo, crownMat);
-  crownMesh3D.position.y = 0.9;
+  crownMesh3D = new THREE.Mesh(new THREE.BufferGeometry(), crownMat);
   toothGroup3D.add(crownMesh3D);
 
-  // Anatomical Root
-  const rootGeo = new THREE.ConeGeometry(0.85, 2.4, 24);
   const rootMat = new THREE.MeshStandardMaterial({
-    color: 0x94a3b8,
-    roughness: 0.3,
-    metalness: 0.85
+    color: 0xd8c398,
+    roughness: 0.6,
+    metalness: 0.0
   });
-  rootMesh3D = new THREE.Mesh(rootGeo, rootMat);
-  rootMesh3D.rotation.x = Math.PI;
-  rootMesh3D.position.y = -1.2;
+  rootMesh3D = new THREE.Mesh(new THREE.BufferGeometry(), rootMat);
   toothGroup3D.add(rootMesh3D);
 
+  // Gingival collar for anatomical context around the cervical line
+  const gumMat = new THREE.MeshPhysicalMaterial({
+    color: 0xe0838c,
+    roughness: 0.48,
+    clearcoat: 0.25,
+    clearcoatRoughness: 0.4
+  });
+  gumMesh3D = new THREE.Mesh(new THREE.TorusGeometry(0.58, 0.16, 16, 40), gumMat);
+  gumMesh3D.rotation.x = Math.PI / 2;
+  gumMesh3D.position.y = 0;
+  toothGroup3D.add(gumMesh3D);
+
   // Invisible Aligner Shell
-  const alignerGeo = new THREE.CylinderGeometry(1.4, 1.1, 2.0, 32, 8, true);
   const alignerMat = new THREE.MeshPhysicalMaterial({
     color: 0x38bdf8,
     roughness: 0.1,
@@ -580,10 +748,11 @@ function init3DStudio() {
     opacity: 0.45,
     transparent: true
   });
-  alignerMesh3D = new THREE.Mesh(alignerGeo, alignerMat);
-  alignerMesh3D.position.y = 0.9;
+  alignerMesh3D = new THREE.Mesh(new THREE.BufferGeometry(), alignerMat);
   alignerMesh3D.visible = false;
   toothGroup3D.add(alignerMesh3D);
+
+  applyToothStyle('veneer');
 
   scene3D.add(toothGroup3D);
 
@@ -641,25 +810,17 @@ function switch3DMode(mode) {
     buttons[0]?.classList.add('active');
     if (title) title.innerText = 'Diseño de Sonrisa (Carilla E-Max)';
     if (desc) desc.innerText = 'Capa ultra-delgada de disilicato de litio adherida sobre el esmalte dental con brillo natural, micro-textura y translucidez incisal perfecta.';
-    if (crownMesh3D) crownMesh3D.material.color.setHex(0xfdfdfd);
-    if (rootMesh3D) rootMesh3D.material.color.setHex(0x94a3b8);
-    if (alignerMesh3D) alignerMesh3D.visible = false;
   } else if (mode === 'implant') {
     buttons[1]?.classList.add('active');
     if (title) title.innerText = 'Implante Dental Titanio 3D';
     if (desc) desc.innerText = 'Perno de titanio grado médico osteointegrado que reemplaza la raíz dental perdida, rematado con corona de porcelana atornillada.';
-    if (crownMesh3D) crownMesh3D.material.color.setHex(0xffffff);
-    if (rootMesh3D) {
-      rootMesh3D.material.color.setHex(0x475569);
-      rootMesh3D.material.metalness = 0.95;
-    }
-    if (alignerMesh3D) alignerMesh3D.visible = false;
   } else if (mode === 'aligner') {
     buttons[2]?.classList.add('active');
     if (title) title.innerText = 'Ortodoncia Invisible (Alineador SELF)';
     if (desc) desc.innerText = 'Funda biomecánica termoformada transparente que ejerce micromovimientos indoloros para alinear tus dientes sin alambres.';
-    if (alignerMesh3D) alignerMesh3D.visible = true;
   }
+
+  if (crownMesh3D && rootMesh3D) applyToothStyle(mode);
 }
 
 // Hook 3D studio initialization to load events
